@@ -2,7 +2,7 @@
   "name": "textdb",
   "version": "0.0.2",
   "description": "simple text based db",
-  "main": "index.js",
+  "main": "src/textdb.js",
   "scripts": {
     "test": "mocha --harmony --harmony-destructuring --harmony_default_parameters tests/"
   },
