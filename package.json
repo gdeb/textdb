@@ -1,6 +1,6 @@
 {
   "name": "textdb",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "simple text based db",
   "main": "src/textdb.js",
   "scripts": {
