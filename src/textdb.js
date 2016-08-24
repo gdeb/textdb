@@ -1,12 +1,19 @@
 'use strict'
 
+const fs = require('fs')
 const fields = require('./fields')
 
 let nextId = 1
 
 class TextDB {
-  constructor () {
+  constructor (options = {}) {
     this.tables = Object.create(null)
+    if (options.path) {
+      const files = fs.readdirSync(options.path)
+      for (let f of files) {
+        this._loadTable(options.path, f)
+      }
+    }
   }
   createTable (name, fields) {
     this.tables[name] = {
@@ -71,135 +78,53 @@ class TextDB {
   read (table, id) {
     return Object.assign({}, this.tables[table].dataMap[id])
   }
+
+  _loadTable (path, name) {
+    const rawData = fs.readFileSync(path + '/' + name, {encoding: 'utf8'})
+    const fields = {}
+    const records = []
+    const lines = rawData.split('\n')
+    const tableName = name.split('.')[0]
+    let currentSection = null
+    for (let line of lines) {
+      if (line.trim() === '') continue
+      if (line[0] === '[' && line[line.length - 1] === ']') {
+        currentSection = line.slice(1, -1)
+        continue
+      }
+      if (currentSection === 'fields') {
+        const field = this.parseFieldLine(line)
+        const name = field.name
+        delete field.name
+        fields[name] = field
+      }
+      if (currentSection === 'data') {
+        records.push(line)
+      }
+    }
+    this.createTable(tableName, fields)
+    for (let r of records) {
+      this.insert(tableName, r)
+    }
+  }
+
+  parseFieldLine (str) {
+    const words = str.split(/\s+/)
+    const result = {
+      name: words[0],
+      type: words[1]
+    }
+    for (let w of words.slice(2)) {
+      const parts = w.split(':')
+      result[parts[0]] = parts[1]
+    }
+    return result
+  }
 }
 
 module.exports = TextDB
 
-// 'use strict'
 
-// const helpers = require('./helpers')
-// let nextId = 1
-
-// module.exports =
-//   class DB {
-//     constructor (rawData, tables, validators) {
-//       this.data = {}
-//       // parsing data
-//       for (let i = 0; i < tables.length; i++) {
-//         this.data[tables[i]] = this.parseFile(rawData[i])
-//       }
-//       // connecting many2ones
-//       for (let table of tables) {
-//         let model = this.data[table]
-//         for (let record_id of Object.keys(model.data)) {
-//           let record = model.data[record_id]
-//           for (let n of Object.keys(model.fields)) {
-//             let field = model.fields[n]
-//             if (field.type === 'many2one') {
-//               let value = this.data[field.comodel].data[record[n]]
-//               if (!value) {
-//                 throw new Error('invalid value for many2one ' + field.name + ': ', record)
-//               }
-//               record[n] = value
-//             }
-//           }
-//         }
-//       }
-
-//       // validating constraints
-//       // to do
-
-//       // switching data from object to list
-//       for (let model of tables) {
-//         let dataObject = this.data[model].data
-//         this.data[model].data = []
-//         for (let id of Object.keys(dataObject)) {
-//           this.data[model].data.push(dataObject[id])
-//         }
-//       }
-//     }
-//     get (model) {
-//       return this.data[model].data
-//     }
-//     parseDataLine (str, fields) {
-//       let result = {}
-//       let words = str.split(/\s+/)
-//       for (let field_name of Object.keys(fields)) {
-//         let field = fields[field_name]
-//         if (field.type === 'word') {
-//           result[field.name] = words[0]
-//           words = words.slice(1)
-//         }
-//         if (field.type === 'amount') {
-//           result[field.name] = helpers.parseAmount(words[0])
-//           words = words.slice(1)
-//         }
-//         if (field.type === 'string') {
-//           result[field.name] = words.join(' ')
-//         }
-//         if (field.type === 'selection') {
-//           if (field.choices.split(',').indexOf(words[0]) > -1) {
-//             result[field.name] = words[0]
-//             words = words.slice(1)
-//           } else {
-//             throw new Error('invalid choice')
-//           }
-//         }
-//         if (field.type === 'many2one') {
-//           result[field.name] = words[0]
-//           words = words.slice(1)
-//         }
-//         if (field.type === 'date') {
-//           result[field.name] = helpers.parseDate(words[0])
-//           words = words.slice(1)
-//         }
-//       }
-//       if (!('id' in result)) {
-//         result.id = nextId
-//         nextId++
-//       }
-//       return result
-//     }
-//     parseFieldLine (str) {
-//       const words = str.split(/\s+/)
-//       const result = {
-//         name: words[0],
-//         type: words[1]
-//       }
-//       for (let w of words.slice(2)) {
-//         const parts = w.split(':')
-//         result[parts[0]] = parts[1]
-//       }
-//       return result
-//     }
-//     parseFile (str) {
-//       const fields = {}
-//       const data = {}
-//       const lines = str.split('\n')
-//       let currentSection = null
-//       for (let line of lines) {
-//         if (line.trim() === '') continue
-//         if (line[0] === '[' && line[line.length - 1] === ']') {
-//           currentSection = line.slice(1, -1)
-//           continue
-//         }
-//         if (currentSection === 'fields') {
-//           const field = this.parseFieldLine(line)
-//           fields[field.name] = field
-//         }
-//         if (currentSection === 'data') {
-//           const record = this.parseDataLine(line, fields)
-//           data[record.id] = record
-//         }
-//       }
-//       return {
-//         fields: fields,
-//         data: data
-//       }
-//     }
-// }
-
-// // 'use strict'
 
 // // const helpers = require('../helpers')
 
