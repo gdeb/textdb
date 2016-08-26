@@ -6,6 +6,10 @@
     "type": "git",
     "url": "git://github.com/gdeb/textdb"
   },
+ "keywords": [
+    "text",
+    "db"
+  ],
   "main": "src/textdb.js",
   "scripts": {
     "test": "mocha --harmony --harmony-destructuring --harmony_default_parameters tests/"
