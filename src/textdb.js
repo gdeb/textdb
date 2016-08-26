@@ -62,7 +62,7 @@ class TextDB {
     table.dataMap[record.id] = record
     return record.id
   }
-  select (table, options = {}) {
+  query (table, options = {}) {
     let records = this.tables[table].data.slice()
     if (options.field) {
       records = records.map(r => r[options.field])
@@ -81,7 +81,7 @@ class TextDB {
     }
     return records
   }
-  read (table, id) {
+  get (table, id) {
     return Object.assign({}, this.tables[table].dataMap[id])
   }
 

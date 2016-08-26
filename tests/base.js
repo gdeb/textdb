@@ -13,13 +13,13 @@ describe('basic db operations', function () {
 
   it('empty table should have no elements', function () {
     db.createTable('test', { f: {type: 'word'} })
-    const accounts = db.select('test')
+    const accounts = db.query('test')
 
     expect(accounts.length).to.be.equal(0)
   })
 
   it('wrong table name is not accepted', function () {
-    expect(_ => db.select('wrong')).to.throw()
+    expect(_ => db.query('wrong')).to.throw()
   })
 
   it('cannot insert in non existing table', function () {
@@ -30,7 +30,7 @@ describe('basic db operations', function () {
     db.createTable('test', { w: {type: 'word'} })
     db.insert('test', {w: 'sss'})
     db.insert('test', 'abc')
-    const words = db.select('test')
+    const words = db.query('test')
 
     expect(words.length).to.be.equal(2)
   })
@@ -39,11 +39,11 @@ describe('basic db operations', function () {
     expect(_ => db.createTable('test', { w: {type: 'lol'} })).to.throw()
   })
 
-  it('can read data with id', function () {
+  it('can get data with id', function () {
     db.createTable('test', {id: {type: 'word'}, f: {type: 'string'}})
     const id = db.insert('test', {id: 'abc', f: 'this is a string'})
     expect(id).to.be.equal('abc')
-    const obj = db.read('test', id)
+    const obj = db.get('test', id)
     expect(obj.f).to.be.equal('this is a string')
   })
 
@@ -55,10 +55,10 @@ describe('basic db operations', function () {
   it('cannot modify a record from the outside', function () {
     db.createTable('test', {id: {type: 'word'}, f: {type: 'string'}})
     const id = db.insert('test', {id: 'abc', f: 'this is a string'})
-    const obj = db.read('test', id)
+    const obj = db.get('test', id)
     expect(obj.f).to.be.equal('this is a string')
     obj.str = 'modified string'
-    const obj2 = db.read('test', id)
+    const obj2 = db.get('test', id)
     expect(obj2.f).to.be.equal('this is a string')
   })
 })
