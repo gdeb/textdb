@@ -15,6 +15,9 @@ description string
 01/07/2016    bank1       -3.94   groceries         2 doughnuts at work
 01/09/2016    bank2       -2.68   groceries         bottle of water
 01/12/2016    bank1      -42.68   transportation    gas
-
+01/15/2016    bank2      -72.53   restaurant        nice chinese restaurant
+01/16/2016    bank1      -52.32   groceries
+01/19/2016    bank1      -51.98   restaurant        italian place
+01/22/2016    bank2       -4.32   groceries         some eggs and stuff
 
 

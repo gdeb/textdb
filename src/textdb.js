@@ -15,9 +15,15 @@ class TextDB {
       }
     }
   }
-  createTable (name, fields) {
+  createTable (name, table_fields) {
+    for (let name of Object.keys(table_fields)) {
+      const type = table_fields[name].type
+      if (!(type in fields)) {
+        throw new Error('Unknown field type: ' + name)
+      }
+    }
     this.tables[name] = {
-      fields: fields,
+      fields: table_fields,
       data: [],
       dataMap: {}
     }
