@@ -31,4 +31,10 @@ describe('querying', function () {
 
     expect(expenses.length).to.be.equal(11)
   })
+
+  it('can query a specific field', function () {
+    const balance = db.query('accounts', {where: t => t.id === 'saving', field: 'balance'})
+
+    expect(balance).to.deep.equal([14004661])
+  })
 })

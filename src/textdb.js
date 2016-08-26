@@ -64,9 +64,6 @@ class TextDB {
   }
   query (table, options = {}) {
     let records = this.tables[table].data.slice()
-    if (options.field) {
-      records = records.map(r => r[options.field])
-    }
 
     if (options.preload) {
       for (let fieldName of options.preload) {
@@ -78,6 +75,9 @@ class TextDB {
     }
     if (options.where) {
       records = records.filter(options.where)
+    }
+    if (options.field) {
+      records = records.map(r => r[options.field])
     }
     return records
   }
