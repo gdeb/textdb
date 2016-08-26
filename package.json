@@ -1,12 +1,12 @@
 {
   "name": "textdb",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "simple text based db",
   "repository": {
     "type": "git",
     "url": "git://github.com/gdeb/textdb"
   },
- "keywords": [
+  "keywords": [
     "text",
     "db"
   ],
