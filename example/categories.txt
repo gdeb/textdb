@@ -1,0 +1,14 @@
+[fields]
+id            word
+type          selection   choices:income,expense
+description   string
+
+[data]
+salary_1                     income   my salary
+salary_2                     income   my partner's salary
+reimbursements               income   expense reimbursements
+groceries                    expense  groceries
+water                        expense  utility: water
+electricity                  expense  utility: electricity
+transportation               expense  transportation: gas, ...
+restaurant                   expense  Restaurants

@@ -1,0 +1,20 @@
+[fields]
+date        date      format:MM/DD/YYYY
+account     many2one  comodel:accounts
+amount      amount
+category    many2one  comodel:categories
+description string
+
+[data]
+01/01/2016    bank1     1643.42   salary_1          monthly salary
+01/02/2016    bank1     1743.42   salary_2          monthly salary
+01/03/2016    bank1      -73.63   electricity       monthly bill
+01/04/2016    bank1      -53.63   water             monthly bill
+01/04/2016    bank2      -13.52   groceries
+01/06/2016    bank1      -23.51   groceries
+01/07/2016    bank1       -3.94   groceries         2 doughnuts at work
+01/09/2016    bank2       -2.68   groceries         bottle of water
+01/12/2016    bank1      -42.68   transportation    gas
+
+
+
