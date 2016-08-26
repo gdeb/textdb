@@ -2,11 +2,15 @@
   "name": "textdb",
   "version": "0.0.4",
   "description": "simple text based db",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/gdeb/textdb"
+  },
   "main": "src/textdb.js",
   "scripts": {
     "test": "mocha --harmony --harmony-destructuring --harmony_default_parameters tests/"
   },
-  "author": "",
+  "author": "Géry Debongnie",
   "license": "ISC",
   "devDependencies": {
     "chai": "^3.5.0",
