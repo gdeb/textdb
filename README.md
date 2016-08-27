@@ -62,7 +62,12 @@ To insert a record:
 
 To query the db:
 ```
-    const account = db.select('accounts', {where: c => c.initialBalance > 2000})
+    const account = db.query('accounts', {where: c => c.initialBalance > 2000})
+```
+
+Values can be transformed with a map function:
+```
+    const balances = db.query('accounts', {map: t => t.initialBalance})
 ```
 
 ## Reading from a folder
