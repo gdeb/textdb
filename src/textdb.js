@@ -79,6 +79,9 @@ class TextDB {
     if (options.field) {
       records = records.map(r => r[options.field])
     }
+    if (options.aggregate) {
+      return records.reduce(options.aggregate)
+    }
     return records
   }
   get (table, id) {
@@ -130,53 +133,3 @@ class TextDB {
 
 module.exports = TextDB
 
-
-
-// // const helpers = require('../helpers')
-
-// // function formatValue (record, field) {
-// //   if (field.type === 'date') {
-// //     return helpers.formatDate(record[field.name])
-// //   }
-// //   if (field.type === 'amount') {
-// //     return helpers.formatAmount(record[field.name], {no_space: true})
-// //   }
-// //   if (field.type === 'many2one') {
-// //     return String(record[field.name].id)
-// //   }
-// //   return String(record[field.name])
-// // }
-
-// // module.exports = function (models, data) {
-// //   const result = []
-// //   for (let model of models) {
-// //     result.push('[' + model.name + ']')
-
-// //     // prepare records in a list
-// //     const records = []
-// //     for (let id of Object.keys(data[model.name])) {
-// //       records.push(data[model.name][id])
-// //     }
-
-// //     // compute maximum length
-// //     const maxLengths = {}
-// //     for (let record of records) {
-// //       for (let field of model.fields) {
-// //         let value = formatValue(record, field)
-// //         maxLengths[field.name] = Math.max(value.length, maxLengths[field.name] || 0)
-// //       }
-// //     }
-// //     // display all elements
-// //     for (let record of records) {
-// //       let str = ''
-// //       for (let field of model.fields) {
-// //         let value = formatValue(record, field)
-// //         let padFunction = field.type === 'amount' ? helpers.leftPad : helpers.rightPad
-// //         str += padFunction(value, maxLengths[field.name], ' ') + '  '
-// //       }
-// //       result.push(str.trim())
-// //     }
-// //     result.push('')
-// //   }
-// //   return result.join('\n')
-// // }

@@ -37,4 +37,15 @@ describe('querying', function () {
 
     expect(balance).to.deep.equal([14004661])
   })
+
+  it('can aggregate values', function () {
+    const expenses = -db.query('transactions', {
+      preload: ['category'],
+      where: t => t.category.type === 'expense',
+      field: 'amount',
+      aggregate: (a, b) => a + b
+    })
+
+    expect(expenses).to.be.equal(39474)
+  })
 })
