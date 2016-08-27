@@ -32,8 +32,8 @@ describe('querying', function () {
     expect(expenses.length).to.be.equal(11)
   })
 
-  it('can query a specific field', function () {
-    const balance = db.query('accounts', {where: t => t.id === 'saving', field: 'balance'})
+  it('can map values on a specific field', function () {
+    const balance = db.query('accounts', {where: t => t.id === 'saving', map: t => t.balance})
 
     expect(balance).to.deep.equal([14004661])
   })
@@ -42,7 +42,7 @@ describe('querying', function () {
     const expenses = -db.query('transactions', {
       preload: ['category'],
       where: t => t.category.type === 'expense',
-      field: 'amount',
+      map: t => t.amount,
       aggregate: (a, b) => a + b
     })
 

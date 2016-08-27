@@ -76,8 +76,8 @@ class TextDB {
     if (options.where) {
       records = records.filter(options.where)
     }
-    if (options.field) {
-      records = records.map(r => r[options.field])
+    if (options.map) {
+      records = records.map(options.map)
     }
     if (options.aggregate) {
       return records.reduce(options.aggregate)
