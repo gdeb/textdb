@@ -58,6 +58,9 @@ class TextDB {
       nextId++
     }
 
+    if (record.id in table.dataMap) {
+      throw new Error('cannot insert record, id already exists')
+    }
     table.data.push(record)
     table.dataMap[record.id] = record
     return record.id

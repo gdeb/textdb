@@ -61,4 +61,10 @@ describe('basic db operations', function () {
     const obj2 = db.get('test', id)
     expect(obj2.f).to.be.equal('this is a string')
   })
+
+  it('cannot insert a record with same id as existing record', function () {
+    db.createTable('test', {id: {type: 'word'}, f: {type: 'string'}})
+    db.insert('test', {id: 'abc', f: 'this is a string'})
+    expect(_ => db.insert('test', {id: 'abc', f: 'another string'})).to.throw()
+  })
 })
