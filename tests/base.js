@@ -8,7 +8,7 @@ let db
 
 describe('basic db operations', function () {
   beforeEach(function () {
-    db = new TextDB()
+    db = new TextDB({path: __dirname + '/../example'})
   })
 
   it('empty table should have no elements', function () {
@@ -66,5 +66,10 @@ describe('basic db operations', function () {
     db.createTable('test', {id: {type: 'word'}, f: {type: 'string'}})
     db.insert('test', {id: 'abc', f: 'this is a string'})
     expect(_ => db.insert('test', {id: 'abc', f: 'another string'})).to.throw()
+  })
+
+  it('can limit number of results', function () {
+    const transactions = db.query('transactions', {limit: 4})
+    expect(transactions.length).to.be.equal(4)
   })
 })

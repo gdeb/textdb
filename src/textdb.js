@@ -85,6 +85,9 @@ class TextDB {
     if (options.aggregate) {
       return records.reduce(options.aggregate)
     }
+    if (options.limit) {
+      records = records.slice(0, options.limit)
+    }
     return records
   }
   get (table, id) {
