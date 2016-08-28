@@ -47,6 +47,12 @@ describe('basic db operations', function () {
     expect(obj.f).to.be.equal('this is a string')
   })
 
+  it('get null if trying to get non existing record', function () {
+    db.createTable('test', {id: {type: 'word'}, f: {type: 'string'}})
+    const obj = db.get('test', 'nope')
+    expect(obj).to.be.equal(null)
+  })
+
   it('cannot insert record with missing field', function () {
     db.createTable('test', {id: {type: 'word'}, f: {type: 'string'}})
     expect(_ => db.insert('test', {id: 'aaa'})).to.throw()

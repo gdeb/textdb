@@ -22,8 +22,18 @@ class TextDB {
         throw new Error('Unknown field type: ' + name)
       }
     }
+    for (let n of Object.keys(table_fields)) {
+      let field = table_fields[n]
+      if (field.type === 'many2one') {
+        this.tables[field.comodel].many2ones.push({
+          table: name,
+          field: n
+        })
+      }
+    }
     this.tables[name] = {
       fields: table_fields,
+      many2ones: [],
       data: [],
       dataMap: {}
     }
@@ -91,9 +101,22 @@ class TextDB {
     return records
   }
   get (table, id) {
-    return Object.assign({}, this.tables[table].dataMap[id])
+    const record = this.tables[table].dataMap[id]
+    return record ? Object.assign({}, record) : null
   }
 
+  delete (table, id) {
+    let t = this.tables[table]
+    for (let m2m of t.many2ones) {
+      if (this.query(m2m.table, {where: r => r[m2m.field] === id, limit: 1}) !== []) {
+        throw new Error('cannot delete record, because other records references it')
+      }
+    }
+    let record = t.dataMap[id]
+    let index = t.data.indexOf(record)
+    t.data.splice(index, 1)
+    delete t.dataMap[id]
+  }
   _loadTable (path, name) {
     const rawData = fs.readFileSync(path + '/' + name, {encoding: 'utf8'})
     const fields = {}
