@@ -10,7 +10,7 @@
     "text",
     "db"
   ],
-  "main": "build/textdb.js",
+  "main": "build/src/text_db.js",
   "scripts": {
     "test": "mocha --harmony --harmony-destructuring --harmony_default_parameters build/tests/"
   },
