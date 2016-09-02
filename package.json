@@ -10,9 +10,9 @@
     "text",
     "db"
   ],
-  "main": "src/textdb.js",
+  "main": "build/textdb.js",
   "scripts": {
-    "test": "mocha --harmony --harmony-destructuring --harmony_default_parameters tests/"
+    "test": "mocha --harmony --harmony-destructuring --harmony_default_parameters build/tests/"
   },
   "author": "Géry Debongnie",
   "license": "ISC",

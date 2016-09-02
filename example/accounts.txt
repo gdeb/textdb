@@ -1,9 +1,3 @@
-[fields]
-id           word
-balance      amount
-description  string
-
-[data]
 bank1       5019.30  Bank 1
 bank2      13344.83  Bank 2
 saving    140046.61  Saving account

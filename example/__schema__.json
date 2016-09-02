@@ -1,0 +1,29 @@
+{
+    "fileExtension": "txt",
+    "tables": [
+        {
+            "name": "accounts",
+            "fields": [
+                {"name": "id", "type": "word"},
+                {"name": "balance", "type": "word"},
+                {"name": "description", "type": "string"}
+            ]
+        }, {
+            "name": "categories",
+            "fields": [
+                {"name": "id", "type": "word"},
+                {"name": "type", "type": "selection", "choices": ["income", "expense"]},
+                {"name": "description", "type": "string"}
+            ]
+        }, {
+            "name": "transactions",
+            "fields": [
+                {"name": "date", "type": "date", "format": "MM/DD/YYYY"},
+                {"name": "account", "type": "many2one", "comodel": "accounts"},
+                {"name": "amount", "type": "amount"},
+                {"name": "category", "type": "many2one", "comodel": "categories"},
+                {"name": "description", "type": "string"}
+            ]
+        }
+    ]
+}
