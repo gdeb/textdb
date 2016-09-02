@@ -1,6 +1,6 @@
 {
   "name": "textdb",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "simple text based db",
   "repository": {
     "type": "git",
