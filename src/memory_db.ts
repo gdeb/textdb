@@ -67,6 +67,12 @@ export default class MemoryDB {
             } else {
                 throw new Error('Missing field: ' + n)
             }
+            const field = table.fields[n]
+            if (field.type === 'many2one') {
+                if (!(data[n] in this.tables[field.comodel].data)) {
+                    throw new Error('Field many2one with wrong key: ' + n)
+                }
+            }
         }
         table.data[data.id] = record
         return record.id
