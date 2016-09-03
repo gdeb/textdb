@@ -83,6 +83,11 @@ export default class MemoryDB {
                     }
                 }
             }
+            if (field.type === 'selection') {
+                if (!field['choices'].includes(fieldValue)) {
+                    throw new Error('Invalid value for selection field: ' + fieldValue)
+                }
+            }
         }
         table.data[data.id] = record
         return record.id

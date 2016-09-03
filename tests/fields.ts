@@ -21,4 +21,13 @@ describe('various fields properties', function () {
         }
         expect(_ => db.insert('transactions', record)).to.throw()
     })
+
+    it('throws if inserting a selection field with wrong choice', function () {
+        const category = {
+            id: 'fake_category',
+            type: 'eexpense',
+            description: 'blabla'
+        }
+        expect(_ => db.insert('categories', category)).to.throw()
+    })
 })
