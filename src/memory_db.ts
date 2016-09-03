@@ -128,8 +128,14 @@ export default class MemoryDB {
         }
         return Object.assign({id: id}, table.data[id])
     }
-    update() {
-
+    update(tableName: string, id: string | number, changes: {[key: string]: any}) {
+        let table = this.tables[tableName]
+        const record = table.data[id]
+        for (let fieldName of Object.keys(table.fields)) {
+            if (fieldName in changes) {
+                record[fieldName] = changes[fieldName]
+            }
+        }
     }
     delete(table: string, id: string | number) {
         const record = this.tables[table].data[id]

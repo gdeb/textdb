@@ -126,4 +126,10 @@ describe('basic operations on demo data', function () {
         db.delete('transactions', t.id)
         expect(_ => db.delete('categories', 'water')).to.not.throw()
     })
+
+    it('can update a record', function () {
+        db.update('accounts', 'visa', {balance: 42})
+        const visaAccount = db.get('accounts', 'visa')
+        expect(visaAccount['balance']).to.be.equal(42)
+    })
 })
