@@ -14,8 +14,11 @@ interface Schema {
 export default class TextDB extends MemoryDB {
     private schema: Schema
     private path: string
-    constructor(path: string) {
+    constructor(path?: string) {
         super()
+        if (!path) {
+            return
+        }
         this.path = path
         const raw_schema = fs.readFileSync(path + '/__schema__.json', { encoding: 'utf8' })
         this.schema = JSON.parse(raw_schema)
