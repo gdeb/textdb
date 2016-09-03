@@ -1,12 +1,29 @@
 # textdb
-Simple text based db for node.js
+*Simple text based db for node.js*
+
+#### Project goals are:
+
+- in memory database, for nodejs
+- can persist data (read/write) in a simple text based format
+- support for relational data
+- completely in javascript (actually, typescript)
+- support for localstorage and use in browser (someday)
 
 
-This is a work VERY much in progress.  The goal is to have a small text based
-database, which allows basic querying/updating.
+My usecase is for small (local) node applications. I want to be able to edit/read my
+personal data in plain text, and not having the hassle to setup a real database.  
 
-My usecase is for small (local) node applications. I like to be able to edit/read my
-personal data in plain text, and not having the hassle to setup a real database.
+Also, if/when localStorage and browser is supported, this project may have an interest for some so-called isomorphic applications.
+
+#### Status
+
+This is a work VERY much in progress.  Please don't use this in production for anything important.
+
+- not production ready AT ALL
+- most likely not performant for many cases (still very naive implementation)
+- all the DB data is loaded in memory.
+- no persistence so far: it can only read from a folder, but not write to it yet
+- basic implementation for update/delete operations.  These operations are probably not safe (for example, no check is done to make sure the new data is valid)
 
 # Installation
 
@@ -15,30 +32,26 @@ With npm:
 npm install textdb  --save
 ```
 
-# How to require it
-
-This package is written in Ecmascript 2015.  I personally use the following flags to run it:
+This package is written in typescript, and compiled for es2015.  I personally use the following flags to run it:
 - --harmony: to enable general harmony features
 - --harmony-destructuring: destructuring objects
 - --harmony_default_parameters: default arguments for function parameters
 
-I will someday add a build, with a js file compiled in Ecmascript 5, to allow node users to simply require it without hassle.
+In a node project, to import the main TextDB class:
+```
+var TextDB = require('textdb').default
+```
 
+Still not totally sure on the best way to proceed, but the 'default' part is still
+necessary.  Someday, I will test and improve the build process.
 
-# Current Status
-
-- not production ready AT ALL
-- most likely not performant for many cases (still very naive implementation)
-- all the DB data is loaded in memory.  This is cool for small databases, but not a good idea for a large dataset.
-- no way to update/remove/delete data
-- no persistence so far: it can only read from a folder, but not write to it yet
 
 # Short User Guide
 
-To instantiate a new empty DB:
+To instantiate a new empty (in memory) DB:
 
 ```
-var TextDB = require('textdb)
+var TextDB = require('textdb).default
 
 var db = new TextDB()
 ```
@@ -65,16 +78,50 @@ To query the db:
     const account = db.query('accounts', {where: c => c.initialBalance > 2000})
 ```
 
-Values can be transformed with a map function:
+To update a record:
 ```
-    const balances = db.query('accounts', {map: t => t.initialBalance})
+    db.update('accounts', 'current', {initialBalance: 42})
 ```
 
-## Reading from a folder
-
-A db can be created with various options:
+To delete a record:
 ```
-var db = new TextDB({path: '/path/to/my/data/folder'})
+    db.delete('accounts', 'current')
+```
+Note that deleting a record will fail if the record is reachable by a 'many2one' field.
+
+
+
+# Reading from a folder
+
+A db can be created with a valid path
+```
+var db = new TextDB('/path/to/my/data/folder')
 ```
 
 This will read all files from the folder, create the corresponding tables, and insert the records.  See the test/ folder for an example.
+
+A valid textdb folder is a folder with:
+- a  `__schema__.json` file, which contains a description of all the tables in the database
+- a file for each of those tables, with one record per line
+
+# Fields
+
+## Basic fields
+
+Here are the various type of fields currently supported:
+- string
+- integer
+- word
+- selection
+- date
+- amount
+
+## Relational fields
+
+In addition to those fields, textdb currently supports:
+
+- many2one
+
+Support for one2many will be added at some point.
+
+
