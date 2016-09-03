@@ -20,15 +20,17 @@ export interface FieldDescription {
 
 interface QueryOptions {
     where? (r: Record) : boolean
-    preload? : string[],
+    preload? : string[]
     limit? : number
 }
 
 export default class MemoryDB {
-    tables: {[key: string]: Table}
+    private tables: {[key: string]: Table}
+    private refs: Map<any, any>
 
     constructor() {
         this.tables = Object.create(null)
+        this.refs = new Map()
     }
 
     createTable(name: string, fieldDescr: {[n: string]: FieldDescription}) : void {
@@ -36,19 +38,16 @@ export default class MemoryDB {
             throw new Error('Error: table already exists: ' + name)
         }
 
-        const fields : {[name: string] : Field<any> } = {}
-
         for (let fieldName of Object.keys(fieldDescr)) {
             const descr = fieldDescr[fieldName]
             const field = basicFields[descr.type]
             if (!field) {
                 throw new Error('Invalid field type: ' + descr.type)
             }
-            fields[fieldName] = field
         }
         this.tables[name] = {
             fields: fieldDescr,
-            data: Object.create(null)
+            data: Object.create(null),
         }
     }
 
@@ -61,16 +60,27 @@ export default class MemoryDB {
             throw new Error('Error: id already exists: ' + data.id)
         }
         const record : Record = Object.create(null)
-        for (let n of Object.keys(table.fields)) {
-            if (n in data) {
-                record[n] = data[n]
+        for (let fieldName of Object.keys(table.fields)) {
+            const fieldValue = data[fieldName]
+            if (fieldName in data) {
+                record[fieldName] = fieldValue
             } else {
-                throw new Error('Missing field: ' + n)
+                throw new Error('Missing field: ' + fieldName)
             }
-            const field = table.fields[n]
+            const field = table.fields[fieldName]
             if (field.type === 'many2one') {
-                if (!(data[n] in this.tables[field.comodel].data)) {
-                    throw new Error('Field many2one with wrong key: ' + n)
+                const otherTable = this.tables[field['comodel']]
+                if (!(fieldValue in otherTable.data)) {
+                    throw new Error('Field many2one with wrong key: ' + fieldName)
+                } else {
+                    const otherRecord = otherTable.data[fieldValue]
+                    if (this.refs.has(otherRecord)) {
+                        this.refs.get(otherRecord).add(record)
+                    } else {
+                        const refs = new Set()
+                        refs.add(record)
+                        this.refs.set(otherRecord, refs)
+                    }
                 }
             }
         }
@@ -85,7 +95,7 @@ export default class MemoryDB {
         }
         const result = []
         for (let id in table.data) {
-            const record = Object.assign({}, table.data[id])
+            const record = Object.assign({id: id}, table.data[id])
             if (options.preload) {
                 for (let fieldName of options.preload) {
                     const field = table.fields[fieldName]
@@ -111,13 +121,31 @@ export default class MemoryDB {
             return null
             // throw new Error('Error: record does not exist')
         }
-        return Object.assign({}, table.data[id])
+        return Object.assign({id: id}, table.data[id])
     }
     update() {
 
     }
-    delete() {
-
+    delete(table: string, id: string | number) {
+        const record = this.tables[table].data[id]
+        if (this.refs.has(record)) {
+            throw new Error('cannot delete record, other records references it: ' + id)
+        }
+        // remove the record from other records refs
+        const fields = this.tables[table].fields
+        for (let fieldName of Object.keys(fields)) {
+            let fieldDescr = fields[fieldName]
+            if (fieldDescr.type === 'many2one') {
+                const otherTable = this.tables[fieldDescr['comodel']]
+                const otherRecord = otherTable.data[record[fieldName]]
+                const refs = this.refs.get(otherRecord)
+                refs.delete(record)
+                if (refs.size === 0) {
+                    this.refs.delete(otherRecord)
+                }
+            }
+        }
+        delete this.tables[table].data[id]
     }
 }
 

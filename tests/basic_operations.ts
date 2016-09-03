@@ -2,14 +2,16 @@
 
 const expect = require('chai').expect
 import MemoryDB from '../src/memory_db'
+import TextDB from '../src/text_db'
 
 let db: MemoryDB
 
-beforeEach(function () {
-    db = new MemoryDB()
-})
 
 describe('basic operations', function () {
+    beforeEach(function () {
+        db = new MemoryDB()
+    })
+
     it('can create a table', function () {
         expect(_ => db.createTable('tests', {
             id: {type: 'integer'},
@@ -91,25 +93,37 @@ describe('basic operations', function () {
         expect(_ => db.insert('test', {id: 'abc', f: 'another string'})).to.throw()
     })
 
-
 })
 
-// let db
+describe('basic operations on demo data', function () {
+    beforeEach(function () {
+        db = new TextDB(__dirname + '/../../example')
+    })
 
-// beforeEach(function () {
-//   db = new TextDB({path: __dirname + '/../example'})
-// })
+    it('create an id if no id is in the list of fields', function () {
+        const [t] = db.query('transactions', {limit: 1})
+        expect(t.id).to.be.a('string')
+    })
 
-// describe('deleting', function () {
-//   it('can delete records', function () {
-//     const [t] = db.query('transactions', {limit: 1})
-//     db.delete('transactions', t.id)
-//     const transaction = db.get('transactions', t.id)
-//     expect(transaction).to.be.equal(null)
-//   })
+    it('can delete records', function () {
+        const [t] = db.query('transactions', {limit: 1})
+        db.delete('transactions', t.id)
+        const transaction = db.get('transactions', t.id)
+        expect(transaction).to.be.equal(null)
+    })
 
-//   it('will not delete if many2one is invalidated', function () {
-//     const account = db.get('accounts', 'bank1')
-//     expect(_ => db.delete('accounts', account)).to.throw()
-//   })
-// })
+    it('will not delete if many2one is invalidated', function () {
+        const account = db.get('accounts', 'bank1')
+        expect(_ => db.delete('accounts', account['id'])).to.throw()
+    })
+
+    it('can delete if related records are deleted as well', function () {
+        expect(_ => db.delete('categories', 'water')).to.throw()
+        const [t] = db.query('transactions', {
+            where: t => t['category'] === 'water',
+            limit: 1
+        })
+        db.delete('transactions', t.id)
+        expect(_ => db.delete('categories', 'water')).to.not.throw()
+    })
+})
