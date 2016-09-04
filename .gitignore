@@ -42,3 +42,5 @@ jspm_packages
 typings/
 
 build/
+
+example/__log__.txt

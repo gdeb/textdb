@@ -11,16 +11,22 @@ interface Schema {
     tables: {name: string, fields: any[]}[]
 }
 
+interface TextDBConfig {
+    path? : string
+    activeLog?: boolean
+}
+
 export default class TextDB extends MemoryDB {
     private schema: Schema
     private path: string
-    constructor(path?: string) {
+    private activeLog: boolean
+    constructor(options : TextDBConfig) {
         super()
-        if (!path) {
+        if (!options.path) {
             return
         }
-        this.path = path
-        const raw_schema = fs.readFileSync(path + '/__schema__.json', { encoding: 'utf8' })
+        this.path = options.path
+        const raw_schema = fs.readFileSync(options.path + '/__schema__.json', { encoding: 'utf8' })
         this.schema = JSON.parse(raw_schema)
         const tables = this.schema.tables.sort(function(t1, t2) {
             for (let f of t2.fields) {
@@ -32,6 +38,7 @@ export default class TextDB extends MemoryDB {
         })
         this.loadTables(tables)
         this.loadRecords(tables)
+        this.activeLog = options.activeLog
     }
     loadTables(tables: any[]) : void {
         for (let table of tables) {
@@ -76,6 +83,34 @@ export default class TextDB extends MemoryDB {
             nextId++
         }
         return record
+    }
+    insert(name : string, data: Record) : string | number {
+        const result = super.insert(name, data)
+        if (this.activeLog && this.path) {
+            const txt = 'insert,' + name + ',' + JSON.stringify(data)
+            this.log(txt)
+        }
+        return result
+    }
+    update(tableName: string, id: string | number, changes: {[key: string]: any}) {
+        super.update(tableName, id, changes)
+        if (this.activeLog && this.path) {
+            const txt = 'update,' + tableName + ',' + id + ',' + JSON.stringify(changes)
+            this.log(txt)
+        }
+    }
+    delete(table: string, id: string | number) {
+        super.delete(table, id)
+        if (this.activeLog && this.path) {
+            const txt = 'delete,' + table + ',' + id
+            this.log(txt)
+        }
+    }
+    private log(txt: string) {
+        const date = new Date()
+        const timestamp = '[' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString() + ']'
+        const logTxt = timestamp + ' ' + txt  + '\n'
+        fs.appendFile(this.path + '/__log__.txt', logTxt)
     }
 
 }

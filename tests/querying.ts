@@ -6,7 +6,7 @@ import TextDB from '../src/text_db'
 let db: TextDB
 
 beforeEach(function () {
-    db = new TextDB(__dirname + '/../../example')
+    db = new TextDB({path: __dirname + '/../../example'})
 })
 
 describe('various querying operations', function () {

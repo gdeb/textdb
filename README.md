@@ -95,7 +95,7 @@ Note that deleting a record will fail if the record is reachable by a 'many2one'
 
 A db can be created with a valid path
 ```
-var db = new TextDB('/path/to/my/data/folder')
+var db = new TextDB({path: '/path/to/my/data/folder'})
 ```
 
 This will read all files from the folder, create the corresponding tables, and insert the records.  See the test/ folder for an example.

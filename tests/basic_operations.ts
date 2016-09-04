@@ -97,7 +97,12 @@ describe('basic operations', function () {
 
 describe('basic operations on demo data', function () {
     beforeEach(function () {
-        db = new TextDB(__dirname + '/../../example')
+        db = new TextDB({path: __dirname + '/../../example', activeLog: true})
+    })
+
+    it('can insert a record', function () {
+        const account = {id: 'test', balance: 133, description: 'yep'}
+        expect(_ => db.insert('accounts', account)).to.not.throw()
     })
 
     it('create an id if no id is in the list of fields', function () {
