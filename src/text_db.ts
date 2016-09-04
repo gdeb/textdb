@@ -40,7 +40,7 @@ export default class TextDB extends MemoryDB {
         this.loadRecords(tables)
         this.activeLog = options.activeLog
     }
-    loadTables(tables: any[]) : void {
+    private loadTables(tables: any[]) : void {
         for (let table of tables) {
             let fields : {[n: string]: FieldDescription} = {}
             for (let f of table.fields) {
@@ -49,7 +49,7 @@ export default class TextDB extends MemoryDB {
             this.createTable(table.name, fields)
         }
     }
-    loadRecords(tables: any[]) : void {
+    private loadRecords(tables: any[]) : void {
         const extension = this.schema.fileExtension
         for (let table of tables) {
             const fileName = this.path + '/' + table.name + '.' + extension
@@ -62,7 +62,7 @@ export default class TextDB extends MemoryDB {
             }
         }
     }
-    parseDataLine(line: string, fieldDescrs: any[]) : Record {
+    private parseDataLine(line: string, fieldDescrs: any[]) : Record {
         const record : Record = {id: undefined}
         let words = line.split(/\s+/)
         for (let descr of fieldDescrs) {
