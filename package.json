@@ -10,8 +10,8 @@
     "text",
     "db"
   ],
-  "main": "build/src/text_db.js",
-  "typings": "build/src/text_db.d.ts",
+  "main": "build/src/index.js",
+  "typings": "build/src/index.d.ts",
   "scripts": {
     "test": "mocha --harmony --harmony-destructuring --harmony_default_parameters build/tests/"
   },

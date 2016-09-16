@@ -16,7 +16,7 @@ export interface TextDBConfig {
     activeLog?: boolean
 }
 
-export default class TextDB extends MemoryDB {
+export class TextDB extends MemoryDB {
     private schema: Schema
     private path: string
     private activeLog: boolean
