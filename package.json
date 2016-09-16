@@ -11,6 +11,7 @@
     "db"
   ],
   "main": "build/src/text_db.js",
+  "typings": "build/src",
   "scripts": {
     "test": "mocha --harmony --harmony-destructuring --harmony_default_parameters build/tests/"
   },

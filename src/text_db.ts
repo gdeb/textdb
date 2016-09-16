@@ -11,7 +11,7 @@ interface Schema {
     tables: {name: string, fields: any[]}[]
 }
 
-interface TextDBConfig {
+export interface TextDBConfig {
     path? : string
     activeLog?: boolean
 }

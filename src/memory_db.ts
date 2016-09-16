@@ -18,7 +18,7 @@ export interface FieldDescription {
     options? : any
 }
 
-interface QueryOptions {
+export interface QueryOptions {
     where? (r: Record) : boolean
     preload? : string[]
     limit? : number
